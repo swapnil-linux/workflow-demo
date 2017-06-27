@@ -1,0 +1,33 @@
+- name: Deploy WebServer
+  hosts: all
+  tasks:
+   - name: install firewalld
+     yum:
+       name: firewalld
+       state: latest
+   - name: start firewalld
+     service:
+       name: firewalld
+       state: started
+       enabled: true
+   - name: Install WebServer Packages
+     yum:
+       name: httpd
+       state: latest
+   - name: Start and Enable Service
+     service:
+       name: httpd
+       state: started
+       enabled: true
+   - name: add port 80 to firewall
+     firewalld:
+       service: http
+       permanent: true
+       state: enabled
+       immediate: true
+   - name: Create index.html
+     template:
+       src: index.html.j2
+       dest: /var/www/html/index.html
+       owner: apache
+       group: apache
